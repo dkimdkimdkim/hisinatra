@@ -1,0 +1,4 @@
+# config/database.yml
+adapter: 'sqlite3'
+encoding: utf-8
+database: 'db/sinatra_application.sqlite3.db'
