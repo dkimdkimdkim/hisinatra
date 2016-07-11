@@ -20,6 +20,10 @@
 require 'active_record'
 require 'yaml'
 
+task :start do
+  system( "ruby app.rb" )
+end
+
 namespace :db do
 
   db_config       = YAML::load(File.open('config/database.yml'))
@@ -28,7 +32,38 @@ namespace :db do
   desc "Create the database"
   task :create do
     ActiveRecord::Base.establish_connection(db_config_admin)
-    ActiveRecord::Base.connection.create_database(db_config["database"])
+    # ActiveRecord::Base.connection.create_database(db_config["database"])
+
+    ActiveRecord::Schema.define do
+      create_table :artists do |t|
+        t.string :name
+        t.text :description
+        t.timestamps
+      end
+
+      create_table :venues do |t|
+        t.string :name
+        t.string :address
+        t.string :city
+        t.string :state
+        t.string :zip_code
+        t.timestamps
+      end
+
+      create_table :shows do |t|
+        t.date :date
+        t.integer :cost
+        t.boolean :liked
+        t.timestamps
+      end
+
+      create_table :gigs do |t|
+        t.belongs_to :artist, index: true
+        t.belongs_to :show, index: true
+        t.timestamps
+      end
+    end
+
     puts "Database created."
   end
 
@@ -88,3 +123,5 @@ end
     abort # needed stop other tasks
   end
 end
+
+task :default => [:start]
